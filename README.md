@@ -26,9 +26,30 @@ To create a new CRUD resource, you only need:
 
 No more manual creation of Controllers, Services, or Repositories is required for standard CRUD operations.
 
-### 4. Testability
-- **Unit Tests**: The `BaseServiceTest` demonstrates how core logic can be tested independently of concrete entities.
-- **Integration Tests**: `ProductControllerIntegrationTest` verifies the full API stack using H2 and `MockMvc`.
+## School Project Mastery: System Design Features
+
+This framework is an excellent candidate for a high-grade system design project because it demonstrates several advanced architectural patterns:
+
+### 1. Layered Architecture & Generics
+- The project clearly separates concerns into **Controller**, **Service**, and **Repository** layers.
+- Use of **Java Generics** shows a high level of abstraction, allowing one code path to handle many different data types.
+
+### 2. Reflection & Metadata-Driven Design
+- By using custom annotations (`@CrudResource`), the system uses **Reflection** to build itself at runtime. This is how many industry-leading frameworks (like Spring itself) operate.
+
+### 3. Design Patterns
+- **Factory Method**: Used in the `DynamicCrudManager` to instantiate repositories and services.
+- **Proxy/Registry Pattern**: The `DynamicCrudManager` acts as a registry for all application resources.
+- **Template Method**: `BaseService` and `BaseController` provide a template for CRUD operations that sub-classes can optionally override.
+
+### 4. Automated Testing
+- The custom `@CrudTest` annotation and `BaseCrudIntegrationTest` demonstrate how to build a **Testing Framework** inside your application, ensuring that any new entity is automatically verified against a standard suite of tests.
+
+## Future Roadmap (For Your Project)
+To take this to the next level for your submission, consider adding:
+1. **Global Exception Handling**: Use `@RestControllerAdvice` to handle 404s and 400s consistently.
+2. **DTO Validation**: Add `@Valid` to the `UniversalCrudController` and use JSR-303 annotations on your records.
+3. **OpenAPI (Swagger)**: Add the `springdoc-openapi` dependency to auto-generate a UI for your dynamic routes.
 
 ## How to Run
 1. Ensure Java 17+ is installed.
