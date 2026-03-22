@@ -28,13 +28,12 @@ The project follows a strict **Data-Logic-Interface** separation to ensure maxim
     - A generic **Service**.
     - A unified **Controller** route at `/api/v2/products`.
 
-### 3. Usage Example
-To create a new CRUD resource, you only need:
-1. A JPA Entity (extending `BaseEntity`).
-2. A DTO Record.
-3. The `@CrudResource` annotation.
-
-No more manual creation of Controllers, Services, or Repositories is required for standard CRUD operations.
+### 🌳 Hierarchical Relationships
+The framework natively supports tree-like structures (Parent-Child, Grandparent-Child) through custom annotations:
+- **`@Parent`**: Marks a field (in `BaseEntity`) that points to a parent entity of the same type.
+- **`@Children`**: Marks a collection that holds child entities.
+- **Automatic Mapping**: If your Record DTO includes components named `parentId` or `grandparentId`, the `toRecord()` engine will automatically resolve and populate these from the hierarchy using reflection.
+- **Helper Methods**: `getGrandparent()` and `getGrandchildren()` are available on all entities for easy traversal.
 
 ## School Project Mastery: System Design Features
 

@@ -10,22 +10,22 @@ import java.util.Optional;
  * [LOGIC LAYER]
  * Abstract business logic service.
  */
-public abstract class BaseService<T extends BaseEntity> {
+public abstract class BaseService<Entity extends BaseEntity> {
     
-    protected abstract BaseRepository<T> getRepository();
+    protected abstract BaseRepository<Entity> getRepository();
 
     @Transactional(readOnly = true)
-    public List<T> findAll() {
+    public List<Entity> findAll() {
         return getRepository().findAll();
     }
 
     @Transactional(readOnly = true)
-    public Optional<T> findById(Long id) {
+    public Optional<Entity> findById(Long id) {
         return getRepository().findById(id);
     }
 
     @Transactional
-    public T save(T entity) {
+    public Entity save(Entity entity) {
         return getRepository().save(entity);
     }
 
@@ -35,7 +35,7 @@ public abstract class BaseService<T extends BaseEntity> {
     }
 
     @Transactional
-    public T update(Long id, T entity) {
+    public Entity update(Long id, Entity entity) {
         if (!getRepository().existsById(id)) {
             throw new RuntimeException("Entity not found");
         }
