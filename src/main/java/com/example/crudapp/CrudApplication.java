@@ -1,7 +1,7 @@
 package com.example.crudapp;
 
-import com.example.crudapp.core.DynamicCrudManager;
-import com.example.crudapp.domain.product.Product;
+import com.example.crudapp.data.Product;
+import com.example.crudapp.logic.DynamicCrudManager;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
