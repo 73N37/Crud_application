@@ -10,6 +10,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,22 +26,37 @@ public class DynamicCrudManager {
     private final EntityManager entityManager;
     private final Map<String, ResourceMetadata<?, ?>> resources = new HashMap<>();
 
+    public Map<String, ResourceMetadata<?, ?>> getResources() {
+        return Collections.unmodifiableMap(resources);
+    }
+
+    @SuppressWarnings("unchecked")
     public void registerResource(Class<? extends BaseEntity> entityClass) {
         if (!entityClass.isAnnotationPresent(CrudResource.class)) return;
 
         CrudResource annotation = entityClass.getAnnotation(CrudResource.class);
         String path = annotation.path();
         Class<?> dtoClass = annotation.dto();
+        Class<? extends BaseService> serviceClass = annotation.service();
 
         JpaRepositoryFactory factory = new JpaRepositoryFactory(entityManager);
         BaseRepository repository = (BaseRepository) factory.getRepository(entityClass);
 
-        BaseService service = new BaseService() {
-            @Override
-            protected BaseRepository getRepository() {
-                return repository;
-            }
-        };
+        BaseService service;
+        
+        // 🏗️ ARCHITECTURE OPTIMIZATION: Service Registry
+        // First try to find a specialized bean in the context.
+        try {
+            service = context.getBean(serviceClass);
+        } catch (Exception e) {
+            // Fallback to anonymous generic service if no bean exists.
+            service = new BaseService() {
+                @Override
+                protected BaseRepository getRepository() {
+                    return repository;
+                }
+            };
+        }
 
         ResourceMetadata metadata = ResourceMetadata.builder()
                 .entityClass(entityClass)

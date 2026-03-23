@@ -1,24 +1,20 @@
 package com.example.crudapp.data.core;
 
-import com.example.crudapp.infrastructure.annotations.Children;
-import com.example.crudapp.infrastructure.annotations.CrudResource;
-import com.example.crudapp.infrastructure.annotations.Parent;
+import com.example.crudapp.infrastructure.mapping.MappingCache;
+import com.example.crudapp.infrastructure.mapping.MappingCache.RecordMapping;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.RecordComponent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
  * [DATA LAYER]
- * Base entity providing JPA identity, hierarchical relationships, and automatic record mapping.
+ * Base entity providing JPA identity, hierarchical relationships, and optimized record mapping.
  */
 @MappedSuperclass
 @Getter
@@ -60,26 +56,23 @@ public abstract class BaseEntity {
         }
 
         Class<R> recordClass = (Class<R>) this.getClass().getAnnotation(CrudResource.class).dto();
-        RecordComponent[] components = recordClass.getRecordComponents();
-        Object[] values = new Object[components.length];
+        RecordMapping<R> mapping = MappingCache.get(recordClass);
+        
+        String[] names = mapping.getParameterNames();
+        Object[] values = new Object[names.length];
 
-        for (int i = 0; i < components.length; i++) {
-            String name = components[i].getName();
-            values[i] = resolveValue(name, components[i].getType());
+        for (int i = 0; i < names.length; i++) {
+            values[i] = resolveValue(names[i]);
         }
 
         try {
-            Class<?>[] paramTypes = Arrays.stream(components)
-                    .map(RecordComponent::getType)
-                    .toArray(Class<?>[]::new);
-            Constructor<R> constructor = recordClass.getDeclaredConstructor(paramTypes);
-            return constructor.newInstance(values);
+            return mapping.getConstructor().newInstance(values);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to instantiate record " + recordClass.getName(), e);
+            throw new RuntimeException("Failed to instantiate optimized record mapping for: " + recordClass.getName(), e);
         }
     }
 
-    private Object resolveValue(String componentName, Class<?> componentType) {
+    private Object resolveValue(String componentName) {
         // Special case: parentId
         if ("parentId".equals(componentName)) {
             return findAnnotatedField(Parent.class)
@@ -105,7 +98,6 @@ public abstract class BaseEntity {
             field.setAccessible(true);
             return field.get(this);
         } catch (Exception e) {
-            // If field not found or other error, return null or handle accordingly
             return null;
         }
     }

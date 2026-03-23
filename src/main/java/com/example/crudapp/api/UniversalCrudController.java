@@ -1,8 +1,7 @@
 package com.example.crudapp.api;
 
-import com.example.crudapp.logic.DynamicCrudManager;
-import com.example.crudapp.logic.ResourceMetadata;
-import lombok.RequiredArgsConstructor;
+import com.example.crudapp.infrastructure.query.GenericSpecification;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +11,7 @@ import java.util.stream.Collectors;
 
 /**
  * [INTERFACE LAYER]
- * Single entry point for all CRUD operations via the dynamic engine.
+ * Single entry point for all CRUD operations via the optimized dynamic engine.
  */
 @RestController
 @RequestMapping("/api/v2")
@@ -21,11 +20,33 @@ public class UniversalCrudController {
 
     private final DynamicCrudManager crudManager;
 
+    /**
+     * 🛠️ DX OPTIMIZATION: Metadata Explorer
+     * Returns all registered resources to allow frontend auto-generation of forms/clients.
+     */
+    @GetMapping("/metadata")
+    public Map<String, String> getMetadata() {
+        return crudManager.getResources().entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        e -> e.getValue().getDtoClass().getSimpleName()
+                ));
+    }
+
+    /**
+     * ⚡ PERFORMANCE OPTIMIZATION: Dynamic Filtering
+     * All query parameters are automatically mapped to database predicates.
+     */
     @GetMapping("/{resource}")
-    public List<?> getAll(@PathVariable String resource) {
-        ResourceMetadata<?, ?> metadata = crudManager.getMetadata(resource);
+    @SuppressWarnings("unchecked")
+    public List<?> getAll(@PathVariable String resource, @RequestParam Map<String, String> params) {
+        ResourceMetadata metadata = crudManager.getMetadata(resource);
         if (metadata == null) throw new RuntimeException("Resource not found");
-        return metadata.getService().findAll().stream()
+        
+        Specification spec = new GenericSpecification(params);
+        List<? extends BaseEntity> entities = metadata.getService().findAll(spec);
+        
+        return entities.stream()
                 .map(entity -> entity.toRecord())
                 .collect(Collectors.toList());
     }

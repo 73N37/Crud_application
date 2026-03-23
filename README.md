@@ -2,6 +2,26 @@
 
 This project implements a highly reusable and testable backend architecture for a Java-based web application.
 
+## ⚡ Implemented Optimizations
+
+The framework has been enhanced with several production-grade optimizations:
+
+### 1. High-Performance Reflection Caching
+- **Implementation**: The `MappingCache` stores record constructors and component metadata.
+- **Benefit**: Drastically reduces the overhead of the `toRecord()` method, making entity-to-DTO conversion nearly as fast as manual mapping.
+
+### 2. Service Layer Registry (Strategy Pattern)
+- **Implementation**: The `@CrudResource` annotation now supports a `service()` parameter.
+- **Benefit**: Allows you to override the generic `BaseService` with specialized business logic for specific entities without breaking the dynamic architecture.
+
+### 3. Dynamic Query Specification
+- **Implementation**: Integrated JPA Specifications with a `GenericSpecification` builder.
+- **Benefit**: Enables instant filtering via URL parameters (e.g., `/api/v2/products?name=Pro`) for all registered resources.
+
+### 4. Visual Metadata Explorer
+- **Implementation**: New endpoint at `/api/v2/metadata`.
+- **Benefit**: Provides a real-time inventory of all registered resources, facilitating front-end automation and API discovery.
+
 ## 🏗️ Architectural Separation (DLI)
 
 The project follows a strict **Data-Logic-Interface** separation to ensure maximum maintainability and clean system design:

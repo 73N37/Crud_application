@@ -2,30 +2,40 @@ package com.example.crudapp.logic.core;
 
 import com.example.crudapp.data.core.BaseEntity;
 import com.example.crudapp.data.core.BaseRepository;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
 /**
  * [LOGIC LAYER]
- * Abstract business logic service.
+ * Abstract business logic service with dynamic specification support.
  */
-public abstract class BaseService<Entity extends BaseEntity> {
-    
-    protected abstract BaseRepository<Entity> getRepository();
+public abstract class BaseService<T extends BaseEntity> {
+
+    protected abstract BaseRepository<T> getRepository();
 
     @Transactional(readOnly = true)
-    public List<Entity> findAll() {
+    public List<T> findAll() {
         return getRepository().findAll();
     }
 
+    /**
+     * ⚡ PERFORMANCE OPTIMIZATION: Dynamic Query Support
+     */
     @Transactional(readOnly = true)
-    public Optional<Entity> findById(Long id) {
+    public List<T> findAll(Specification<T> spec) {
+        return getRepository().findAll(spec);
+    }
+
+
+    @Transactional(readOnly = true)
+    public Optional<T> findById(Long id) {
         return getRepository().findById(id);
     }
 
     @Transactional
-    public Entity save(Entity entity) {
+    public T save(T entity) {
         return getRepository().save(entity);
     }
 
@@ -35,7 +45,7 @@ public abstract class BaseService<Entity extends BaseEntity> {
     }
 
     @Transactional
-    public Entity update(Long id, Entity entity) {
+    public T update(Long id, T entity) {
         if (!getRepository().existsById(id)) {
             throw new RuntimeException("Entity not found");
         }
