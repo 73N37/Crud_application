@@ -1,7 +1,7 @@
 package com.example.crudapp.core;
 
 import com.example.crudapp.data.core.BaseEntity;
-import com.example.crudapp.data.core.BaseRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import com.example.crudapp.logic.core.BaseService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
 class BaseServiceTest {
 
     @Mock
-    private BaseRepository<TestEntity> repository;
+    private JpaRepository<TestEntity, Long> repository;
 
     private TestService service;
 
@@ -49,14 +49,14 @@ class BaseServiceTest {
     static class TestEntity extends BaseEntity {}
     
     static class TestService extends BaseService<TestEntity> {
-        private final BaseRepository<TestEntity> repository;
+        private final JpaRepository<TestEntity, Long> repository;
 
-        TestService(BaseRepository<TestEntity> repository) {
+        TestService(JpaRepository<TestEntity, Long> repository) {
             this.repository = repository;
         }
 
         @Override
-        protected BaseRepository<TestEntity> getRepository() {
+        protected JpaRepository<TestEntity, Long> getRepository() {
             return repository;
         }
     }

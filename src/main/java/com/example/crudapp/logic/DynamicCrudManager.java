@@ -1,12 +1,12 @@
 package com.example.crudapp.logic;
 
 import com.example.crudapp.data.core.BaseEntity;
-import com.example.crudapp.data.core.BaseRepository;
 import com.example.crudapp.infrastructure.annotations.CrudResource;
 import com.example.crudapp.logic.core.BaseService;
 import jakarta.persistence.EntityManager;
 import org.springframework.context.ApplicationContext;
-import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -42,8 +42,9 @@ public class DynamicCrudManager {
         Class<?> dtoClass = annotation.dto();
         Class<? extends BaseService> serviceClass = annotation.service();
 
-        JpaRepositoryFactory factory = new JpaRepositoryFactory(entityManager);
-        BaseRepository repository = (BaseRepository) factory.getRepository(entityClass);
+        // ⚡ PERFORMANCE OPTIMIZATION: Dynamic Repository Generation
+        // Using SimpleJpaRepository to avoid the "must be an interface" requirement of JpaRepositoryFactory.
+        JpaRepository repository = new SimpleJpaRepository(entityClass, entityManager);
 
         BaseService service;
         
@@ -55,7 +56,7 @@ public class DynamicCrudManager {
             // Fallback to anonymous generic service if no bean exists.
             service = new BaseService() {
                 @Override
-                protected BaseRepository getRepository() {
+                protected JpaRepository getRepository() {
                     return repository;
                 }
             };
