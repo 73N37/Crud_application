@@ -1,8 +1,5 @@
 package com.example.crudapp.infrastructure.mapping;
 
-import lombok.Builder;
-import lombok.Getter;
-
 import java.lang.reflect.Constructor;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,12 +13,48 @@ public class MappingCache {
 
     private static final Map<Class<?>, RecordMapping<?>> cache = new ConcurrentHashMap<>();
 
-    @Getter
-    @Builder
     public static class RecordMapping<R extends Record> {
         private final Constructor<R> constructor;
         private final Class<?>[] parameterTypes;
         private final String[] parameterNames;
+
+        public RecordMapping(Constructor<R> constructor, Class<?>[] parameterTypes, String[] parameterNames) {
+            this.constructor = constructor;
+            this.parameterTypes = parameterTypes;
+            this.parameterNames = parameterNames;
+        }
+
+        public Constructor<R> getConstructor() { return constructor; }
+        public String[] getParameterNames() { return parameterNames; }
+
+        public static <R extends Record> RecordMappingBuilder<R> builder() {
+            return new RecordMappingBuilder<>();
+        }
+
+        public static class RecordMappingBuilder<R extends Record> {
+            private Constructor<R> constructor;
+            private Class<?>[] parameterTypes;
+            private String[] parameterNames;
+
+            public RecordMappingBuilder<R> constructor(Constructor<R> constructor) {
+                this.constructor = constructor;
+                return this;
+            }
+
+            public RecordMappingBuilder<R> parameterTypes(Class<?>[] parameterTypes) {
+                this.parameterTypes = parameterTypes;
+                return this;
+            }
+
+            public RecordMappingBuilder<R> parameterNames(String[] parameterNames) {
+                this.parameterNames = parameterNames;
+                return this;
+            }
+
+            public RecordMapping<R> build() {
+                return new RecordMapping<>(constructor, parameterTypes, parameterNames);
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")

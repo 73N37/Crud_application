@@ -51,3 +51,29 @@ Currently, we use a single `UniversalCrudController`.
 ### 3. Visual Schema Explorer
 - **Idea**: Add an endpoint (e.g., `/api/metadata`) that returns a JSON representation of all registered resources, their fields, and their relationships.
 - **Impact**: Useful for front-end developers to auto-generate forms or API clients.
+
+---
+
+## 🚨 5 Critical Missing Features (School Assignment Checklist)
+
+Based on a repository audit for a high-grade academic submission, these 5 core features are currently missing or incomplete:
+
+### 1. Fully Functional Write Operations (POST/PUT)
+- **Current State**: The `create` method in `UniversalCrudController` is a placeholder (`String` return type), and the `update` method is entirely missing from the REST interface.
+- **Requirement**: Implement a dynamic POST (Create) and PUT (Update) logic using an `ObjectMapper` to map incoming JSON bodies to the respective Entity classes before saving via the `BaseService`.
+
+### 2. Global Exception Handling (`@ControllerAdvice`)
+- **Current State**: Errors (like "Resource not found") throw a raw `RuntimeException`, which results in a generic 500 error for the client.
+- **Requirement**: Create a `@RestControllerAdvice` class with `@ExceptionHandler` methods to return clean, standardized JSON error responses with appropriate HTTP status codes (e.g., 404 for Not Found, 400 for Bad Request).
+
+### 3. API Pagination and Sorting
+- **Current State**: The `getAll` endpoint returns the entire database contents for a resource in a single list.
+- **Requirement**: Integrate Spring Data JPA's `Pageable` and `Sort` parameters into the `UniversalCrudController`. This prevents performance degradation as the database grows.
+
+### 4. Data Validation (JSR-303)
+- **Current State**: The `ProductRecord` and other DTOs have no validation annotations. A user could send a "price" of -100 or an empty "name" without being blocked.
+- **Requirement**: Add `@NotBlank`, `@Positive`, and `@Size` annotations to the Records and use the `@Valid` annotation in the controller to ensure data integrity.
+
+### 5. Interactive API Documentation (Swagger/OpenAPI)
+- **Current State**: There is no way for a user or grader to easily test the dynamic endpoints without a tool like Postman.
+- **Requirement**: Add the `springdoc-openapi-starter-webmvc-ui` dependency to `pom.xml`. This automatically generates a Swagger UI at `/swagger-ui.html`, allowing for live testing of all CRUD operations.

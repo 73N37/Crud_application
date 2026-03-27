@@ -1,6 +1,6 @@
 package com.example.crudapp.core;
 
-import com.example.crudapp.core.annotations.CrudTest;
+import com.example.crudapp.infrastructure.annotations.CrudTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,5 +1,8 @@
 package com.example.crudapp.core;
 
+import com.example.crudapp.data.core.BaseEntity;
+import com.example.crudapp.data.core.BaseRepository;
+import com.example.crudapp.logic.core.BaseService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;

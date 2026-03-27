@@ -5,7 +5,6 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
@@ -17,10 +16,13 @@ import java.util.Map;
  * Automatically converts URL query parameters into JPA Predicates.
  * Supports basic 'equals' filtering for any entity field.
  */
-@RequiredArgsConstructor
 public class GenericSpecification<T extends BaseEntity> implements Specification<T> {
 
     private final Map<String, String> params;
+
+    public GenericSpecification(Map<String, String> params) {
+        this.params = params;
+    }
 
     @Override
     public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {

@@ -1,13 +1,24 @@
 package com.example.crudapp.api.records;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
+
 /**
  * [INTERFACE LAYER]
  * Immutable API representation of a Product, including hierarchy support.
  */
 public record ProductRecord(
+    @NotBlank(message = "Name is required")
+    @Size(min = 2, max = 100, message = "Name must be between 2 and 100 characters")
     String name,
+    
+    @Size(max = 500, message = "Description can't exceed 500 characters")
     String description,
+    
+    @Positive(message = "Price must be positive")
     Double price,
+    
     Long parentId,
     Long grandparentId
 ) {}

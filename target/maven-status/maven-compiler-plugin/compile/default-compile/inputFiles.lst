@@ -1,0 +1,16 @@
+C:\Users\vase_\Desktop\Crud_application\src\main\java\com\example\crudapp\api\records\ProductRecord.java
+C:\Users\vase_\Desktop\Crud_application\src\main\java\com\example\crudapp\logic\core\BaseService.java
+C:\Users\vase_\Desktop\Crud_application\src\main\java\com\example\crudapp\data\core\BaseRepository.java
+C:\Users\vase_\Desktop\Crud_application\src\main\java\com\example\crudapp\data\core\BaseEntity.java
+C:\Users\vase_\Desktop\Crud_application\src\main\java\com\example\crudapp\infrastructure\annotations\Children.java
+C:\Users\vase_\Desktop\Crud_application\src\main\java\com\example\crudapp\logic\ResourceMetadata.java
+C:\Users\vase_\Desktop\Crud_application\src\main\java\com\example\crudapp\data\Product.java
+C:\Users\vase_\Desktop\Crud_application\src\main\java\com\example\crudapp\logic\DynamicCrudManager.java
+C:\Users\vase_\Desktop\Crud_application\src\main\java\com\example\crudapp\infrastructure\annotations\CrudTest.java
+C:\Users\vase_\Desktop\Crud_application\src\main\java\com\example\crudapp\infrastructure\exception\GlobalExceptionHandler.java
+C:\Users\vase_\Desktop\Crud_application\src\main\java\com\example\crudapp\infrastructure\mapping\MappingCache.java
+C:\Users\vase_\Desktop\Crud_application\src\main\java\com\example\crudapp\infrastructure\query\GenericSpecification.java
+C:\Users\vase_\Desktop\Crud_application\src\main\java\com\example\crudapp\api\UniversalCrudController.java
+C:\Users\vase_\Desktop\Crud_application\src\main\java\com\example\crudapp\infrastructure\annotations\Parent.java
+C:\Users\vase_\Desktop\Crud_application\src\main\java\com\example\crudapp\CrudApplication.java
+C:\Users\vase_\Desktop\Crud_application\src\main\java\com\example\crudapp\infrastructure\annotations\CrudResource.java

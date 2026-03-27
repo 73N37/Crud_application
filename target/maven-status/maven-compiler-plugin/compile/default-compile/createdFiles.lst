@@ -1,0 +1,3 @@
+com\example\crudapp\infrastructure\exception\GlobalExceptionHandler.class
+com\example\crudapp\infrastructure\annotations\CrudTest.class
+com\example\crudapp\logic\DynamicCrudManager$1.class

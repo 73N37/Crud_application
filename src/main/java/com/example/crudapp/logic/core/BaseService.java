@@ -1,8 +1,9 @@
 package com.example.crudapp.logic.core;
 
 import com.example.crudapp.data.core.BaseEntity;
-import com.example.crudapp.data.core.BaseRepository;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +14,12 @@ import java.util.Optional;
  */
 public abstract class BaseService<T extends BaseEntity> {
 
-    protected abstract BaseRepository<T> getRepository();
+    protected abstract JpaRepository<T, Long> getRepository();
+
+    @SuppressWarnings("unchecked")
+    protected JpaSpecificationExecutor<T> getSpecificationExecutor() {
+        return (JpaSpecificationExecutor<T>) getRepository();
+    }
 
     @Transactional(readOnly = true)
     public List<T> findAll() {
@@ -21,11 +27,16 @@ public abstract class BaseService<T extends BaseEntity> {
     }
 
     /**
-     * ⚡ PERFORMANCE OPTIMIZATION: Dynamic Query Support
+     * ⚡ PERFORMANCE OPTIMIZATION: Dynamic Query Support with Pagination
      */
     @Transactional(readOnly = true)
     public List<T> findAll(Specification<T> spec) {
-        return getRepository().findAll(spec);
+        return getSpecificationExecutor().findAll(spec);
+    }
+
+    @Transactional(readOnly = true)
+    public org.springframework.data.domain.Page<T> findAll(Specification<T> spec, org.springframework.data.domain.Pageable pageable) {
+        return getSpecificationExecutor().findAll(spec, pageable);
     }
 
 

@@ -1,7 +1,8 @@
 package com.example.crudapp.domain.product;
 
 import com.example.crudapp.core.BaseCrudIntegrationTest;
-import com.example.crudapp.core.annotations.CrudTest;
+import com.example.crudapp.data.Product;
+import com.example.crudapp.infrastructure.annotations.CrudTest;
 
 /**
  * Automated CRUD tests for Product resource.

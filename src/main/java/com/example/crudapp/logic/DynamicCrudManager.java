@@ -5,7 +5,6 @@ import com.example.crudapp.data.core.BaseRepository;
 import com.example.crudapp.infrastructure.annotations.CrudResource;
 import com.example.crudapp.logic.core.BaseService;
 import jakarta.persistence.EntityManager;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
 import org.springframework.stereotype.Component;
@@ -19,12 +18,16 @@ import java.util.Map;
  * Orchestrates the registration of dynamic CRUD resources.
  */
 @Component
-@RequiredArgsConstructor
 public class DynamicCrudManager {
 
     private final ApplicationContext context;
     private final EntityManager entityManager;
     private final Map<String, ResourceMetadata<?, ?>> resources = new HashMap<>();
+
+    public DynamicCrudManager(ApplicationContext context, EntityManager entityManager) {
+        this.context = context;
+        this.entityManager = entityManager;
+    }
 
     public Map<String, ResourceMetadata<?, ?>> getResources() {
         return Collections.unmodifiableMap(resources);
