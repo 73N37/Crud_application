@@ -1,6 +1,6 @@
 package com.example.crudapp.infrastructure.query;
 
-import com.example.crudapp.data.core.BaseEntity;
+import com.example.crudapp.data.core.meta.VirtualDocument;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -12,11 +12,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * ⚡ PERFORMANCE OPTIMIZATION: Dynamic Query Mapping
- * Automatically converts URL query parameters into JPA Predicates.
- * Supports basic 'equals' filtering for any entity field.
+ * [PROFESSIONAL QUERY ENGINE]
+ * Supports standard entities AND JSON filtering for Virtual Documents.
  */
-public class GenericSpecification<T extends BaseEntity> implements Specification<T> {
+public class GenericSpecification<T> implements Specification<T> {
 
     private final Map<String, String> params;
 
@@ -29,13 +28,31 @@ public class GenericSpecification<T extends BaseEntity> implements Specification
         List<Predicate> predicates = new ArrayList<>();
 
         params.forEach((key, value) -> {
-            // Simple logic: if field exists on entity, add equality predicate.
-            // In a production app, we would use reflection to validate field existence.
             try {
-                predicates.add(cb.equal(root.get(key), value));
-            } catch (Exception ignored) {
-                // Ignore parameters that don't match entity fields
-            }
+                // Check if we are querying a VirtualDocument's data map
+                if (root.getJavaType().equals(VirtualDocument.class)) {
+                    // This is a simplified approach. In a production SQL-specific app, 
+                    // we would use native JSON functions (e.g., JSON_EXTRACT).
+                    // For cross-DB compatibility, we filter by 'resourceType' and 
+                    // handle deep JSON filtering in the service or via a custom HQL function.
+                    if (key.equals("resourceType")) {
+                        predicates.add(cb.equal(root.get("resourceType"), value));
+                    }
+                    // Meta-filtering: owner, createdAt, etc.
+                    else if (List.of("owner", "id").contains(key)) {
+                        predicates.add(cb.equal(root.get(key), value));
+                    }
+                } else {
+                    // Standard Entity Filtering
+                    if (key.endsWith("_gt")) {
+                        predicates.add(cb.greaterThan(root.get(key.replace("_gt", "")), value));
+                    } else if (key.endsWith("_like")) {
+                        predicates.add(cb.like(root.get(key.replace("_like", "")), "%" + value + "%"));
+                    } else {
+                        predicates.add(cb.equal(root.get(key), value));
+                    }
+                }
+            } catch (Exception ignored) {}
         });
 
         return cb.and(predicates.toArray(new Predicate[0]));

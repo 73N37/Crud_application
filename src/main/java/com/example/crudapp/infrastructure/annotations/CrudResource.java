@@ -20,4 +20,10 @@ public @interface CrudResource {
      * Allows developers to provide a specific Service implementation.
      */
     Class<? extends BaseService> service() default BaseService.class;
+
+    /**
+     * 🔒 SECURITY OPTIMIZATION: Role-Based Access Control
+     * List of roles required to access this resource.
+     */
+    String[] roles() default {};
 }

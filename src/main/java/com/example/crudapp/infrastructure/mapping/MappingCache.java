@@ -1,60 +1,33 @@
 package com.example.crudapp.infrastructure.mapping;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Constructor;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * ⚡ PERFORMANCE OPTIMIZATION
- * Singleton cache for storing record constructors and field mappings.
- * Reduces the CPU overhead of reflection during entity-to-DTO conversion.
+ * Singleton cache for storing record constructors using MethodHandles.
+ * MethodHandles are closer to direct JVM instructions than standard Reflection.
  */
 public class MappingCache {
 
     private static final Map<Class<?>, RecordMapping<?>> cache = new ConcurrentHashMap<>();
+    private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
 
     public static class RecordMapping<R extends Record> {
-        private final Constructor<R> constructor;
-        private final Class<?>[] parameterTypes;
+        private final MethodHandle constructorHandle;
         private final String[] parameterNames;
 
-        public RecordMapping(Constructor<R> constructor, Class<?>[] parameterTypes, String[] parameterNames) {
-            this.constructor = constructor;
-            this.parameterTypes = parameterTypes;
+        public RecordMapping(MethodHandle constructorHandle, String[] parameterNames) {
+            this.constructorHandle = constructorHandle;
             this.parameterNames = parameterNames;
         }
 
-        public Constructor<R> getConstructor() { return constructor; }
+        public MethodHandle getConstructorHandle() { return constructorHandle; }
         public String[] getParameterNames() { return parameterNames; }
-
-        public static <R extends Record> RecordMappingBuilder<R> builder() {
-            return new RecordMappingBuilder<>();
-        }
-
-        public static class RecordMappingBuilder<R extends Record> {
-            private Constructor<R> constructor;
-            private Class<?>[] parameterTypes;
-            private String[] parameterNames;
-
-            public RecordMappingBuilder<R> constructor(Constructor<R> constructor) {
-                this.constructor = constructor;
-                return this;
-            }
-
-            public RecordMappingBuilder<R> parameterTypes(Class<?>[] parameterTypes) {
-                this.parameterTypes = parameterTypes;
-                return this;
-            }
-
-            public RecordMappingBuilder<R> parameterNames(String[] parameterNames) {
-                this.parameterNames = parameterNames;
-                return this;
-            }
-
-            public RecordMapping<R> build() {
-                return new RecordMapping<>(constructor, parameterTypes, parameterNames);
-            }
-        }
     }
 
     @SuppressWarnings("unchecked")
@@ -70,14 +43,11 @@ public class MappingCache {
                     paramNames[i] = components[i].getName();
                 }
 
-                Constructor<R> constructor = (Constructor<R>) clazz.getDeclaredConstructor(paramTypes);
-                constructor.setAccessible(true);
+                // Create a MethodHandle for the record constructor
+                MethodType methodType = MethodType.methodType(void.class, paramTypes);
+                MethodHandle handle = LOOKUP.findConstructor(clazz, methodType);
 
-                return RecordMapping.<R>builder()
-                        .constructor(constructor)
-                        .parameterTypes(paramTypes)
-                        .parameterNames(paramNames)
-                        .build();
+                return new RecordMapping<>(handle, paramNames);
             } catch (Exception e) {
                 throw new RuntimeException("Failed to cache mapping for record: " + recordClass.getName(), e);
             }

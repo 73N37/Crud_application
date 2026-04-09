@@ -1,13 +1,17 @@
 package com.example.crudapp.logic;
 
 import com.example.crudapp.data.core.BaseEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import com.example.crudapp.logic.core.BaseService;
+import com.example.crudapp.logic.core.CrudInterceptor;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * [LOGIC LAYER]
  * Metadata bridge between Data and Interface.
+ * Enhanced with Interceptors and Rich Field Metadata.
  */
 public class ResourceMetadata<T extends BaseEntity, R extends Record> {
     private final Class<T> entityClass;
@@ -15,13 +19,19 @@ public class ResourceMetadata<T extends BaseEntity, R extends Record> {
     private final String basePath;
     private final JpaRepository<T, Long> repository;
     private final BaseService<T> service;
+    private final CrudInterceptor<T> interceptor;
+    private final List<FieldInfo> fields;
 
-    public ResourceMetadata(Class<T> entityClass, Class<R> dtoClass, String basePath, JpaRepository<T, Long> repository, BaseService<T> service) {
+    public ResourceMetadata(Class<T> entityClass, Class<R> dtoClass, String basePath, 
+                            JpaRepository<T, Long> repository, BaseService<T> service,
+                            CrudInterceptor<T> interceptor, List<FieldInfo> fields) {
         this.entityClass = entityClass;
         this.dtoClass = dtoClass;
         this.basePath = basePath;
         this.repository = repository;
         this.service = service;
+        this.interceptor = interceptor;
+        this.fields = fields;
     }
 
     public Class<T> getEntityClass() { return entityClass; }
@@ -29,6 +39,10 @@ public class ResourceMetadata<T extends BaseEntity, R extends Record> {
     public String getBasePath() { return basePath; }
     public JpaRepository<T, Long> getRepository() { return repository; }
     public BaseService<T> getService() { return service; }
+    public CrudInterceptor<T> getInterceptor() { return interceptor; }
+    public List<FieldInfo> getFields() { return fields; }
+
+    public record FieldInfo(String name, String type, boolean required, Map<String, Object> constraints) {}
 
     public static ResourceMetadataBuilder builder() {
         return new ResourceMetadataBuilder();
@@ -40,6 +54,8 @@ public class ResourceMetadata<T extends BaseEntity, R extends Record> {
         private String basePath;
         private JpaRepository<T, Long> repository;
         private BaseService<T> service;
+        private CrudInterceptor<T> interceptor;
+        private List<FieldInfo> fields;
 
         public ResourceMetadataBuilder<T, R> entityClass(Class<T> entityClass) {
             this.entityClass = entityClass;
@@ -66,8 +82,18 @@ public class ResourceMetadata<T extends BaseEntity, R extends Record> {
             return this;
         }
 
+        public ResourceMetadataBuilder<T, R> interceptor(CrudInterceptor<T> interceptor) {
+            this.interceptor = interceptor;
+            return this;
+        }
+
+        public ResourceMetadataBuilder<T, R> fields(List<FieldInfo> fields) {
+            this.fields = fields;
+            return this;
+        }
+
         public ResourceMetadata<T, R> build() {
-            return new ResourceMetadata<>(entityClass, dtoClass, basePath, repository, service);
+            return new ResourceMetadata<>(entityClass, dtoClass, basePath, repository, service, interceptor, fields);
         }
     }
 }
