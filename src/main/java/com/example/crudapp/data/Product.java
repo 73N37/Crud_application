@@ -4,6 +4,7 @@ import com.example.crudapp.api.records.ProductRecord;
 import com.example.crudapp.data.core.BaseEntity;
 import com.example.crudapp.infrastructure.annotations.CrudResource;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 /**
  * [DATA LAYER]

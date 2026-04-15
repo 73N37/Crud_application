@@ -5,23 +5,40 @@ import com.example.crudapp.data.core.GenericRepository;
 import com.example.crudapp.infrastructure.annotations.CrudResource;
 import com.example.crudapp.logic.core.BaseService;
 import com.example.crudapp.logic.core.CrudInterceptor;
+import jakarta.annotation.PostConstruct;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.*;
 
+@Service
 public class DynamicCrudManager {
 
     private static final Logger log = LoggerFactory.getLogger(DynamicCrudManager.class);
     private final Map<String, ResourceMetadata<?, ?>> resources = new HashMap<>();
     private final Map<Class<?>, CrudInterceptor<?>> interceptors = new HashMap<>();
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @Value("${crud.scan.package:com.example.crudapp.data}")
+    private String scanPackage;
+
+    @PostConstruct
+    public void init() {
+        discoverAndRegister(scanPackage);
+    }
 
     public void registerInterceptor(Class<?> entityClass, CrudInterceptor<?> interceptor) {
         interceptors.put(entityClass, interceptor);
@@ -69,7 +86,7 @@ public class DynamicCrudManager {
         Class<?> dtoClass = annotation.dto();
         Class<? extends BaseService> serviceClass = annotation.service();
 
-        GenericRepository<T> repository = new GenericRepository<>(entityClass);
+        GenericRepository<T> repository = new GenericRepository<>(entityClass, entityManager);
 
         BaseService<T> service;
         try {
