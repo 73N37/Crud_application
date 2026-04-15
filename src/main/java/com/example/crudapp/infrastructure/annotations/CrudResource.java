@@ -25,5 +25,5 @@ public @interface CrudResource {
      * 🔒 SECURITY OPTIMIZATION: Role-Based Access Control
      * List of roles required to access this resource.
      */
-    String[] roles() default {};
+    String[] roles() default {"ANYONE", "USER", "ADMIN"};
 }

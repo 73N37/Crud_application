@@ -3,15 +3,9 @@ package com.example.crudapp.infrastructure.mapping;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
-import java.lang.reflect.Constructor;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * ⚡ PERFORMANCE OPTIMIZATION
- * Singleton cache for storing record constructors using MethodHandles.
- * MethodHandles are closer to direct JVM instructions than standard Reflection.
- */
 public class MappingCache {
 
     private static final Map<Class<?>, RecordMapping<?>> cache = new ConcurrentHashMap<>();
