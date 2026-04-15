@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
  * Base entity providing JPA identity, hierarchical relationships, and optimized record mapping.
  */
 @Entity
+@Table(name = "baseentity")
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class BaseEntity {
     @Id

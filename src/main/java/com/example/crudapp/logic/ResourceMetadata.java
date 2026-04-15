@@ -1,99 +1,109 @@
 package com.example.crudapp.logic;
 
 import com.example.crudapp.data.core.BaseEntity;
+import com.example.crudapp.data.core.GenericRepository;
 import com.example.crudapp.logic.core.BaseService;
 import com.example.crudapp.logic.core.CrudInterceptor;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Map;
 
-/**
- * [LOGIC LAYER]
- * Metadata bridge between Data and Interface.
- * Enhanced with Interceptors and Rich Field Metadata.
- */
-public class ResourceMetadata<T extends BaseEntity, R extends Record> {
+public class ResourceMetadata<T extends BaseEntity, D> {
     private final Class<T> entityClass;
-    private final Class<R> dtoClass;
+    private final Class<D> dtoClass;
     private final String basePath;
-    private final JpaRepository<T, Long> repository;
+    private final GenericRepository<T> repository;
     private final BaseService<T> service;
     private final CrudInterceptor<T> interceptor;
     private final List<FieldInfo> fields;
 
-    public ResourceMetadata(Class<T> entityClass, Class<R> dtoClass, String basePath, 
-                            JpaRepository<T, Long> repository, BaseService<T> service,
-                            CrudInterceptor<T> interceptor, List<FieldInfo> fields) {
-        this.entityClass = entityClass;
-        this.dtoClass = dtoClass;
-        this.basePath = basePath;
-        this.repository = repository;
-        this.service = service;
-        this.interceptor = interceptor;
-        this.fields = fields;
+    private ResourceMetadata(Builder<T, D> builder) {
+        this.entityClass = builder.entityClass;
+        this.dtoClass = builder.dtoClass;
+        this.basePath = builder.basePath;
+        this.repository = builder.repository;
+        this.service = builder.service;
+        this.interceptor = builder.interceptor;
+        this.fields = builder.fields;
+    }
+
+    public static <T extends BaseEntity, D> Builder<T, D> builder() {
+        return new Builder<>();
     }
 
     public Class<T> getEntityClass() { return entityClass; }
-    public Class<R> getDtoClass() { return dtoClass; }
+    public Class<D> getDtoClass() { return dtoClass; }
     public String getBasePath() { return basePath; }
-    public JpaRepository<T, Long> getRepository() { return repository; }
+    public GenericRepository<T> getRepository() { return repository; }
     public BaseService<T> getService() { return service; }
     public CrudInterceptor<T> getInterceptor() { return interceptor; }
     public List<FieldInfo> getFields() { return fields; }
 
-    public record FieldInfo(String name, String type, boolean required, Map<String, Object> constraints) {}
+    public static class FieldInfo {
+        private final String name;
+        private final String type;
+        private final boolean required;
+        private final Map<String, Object> constraints;
 
-    public static ResourceMetadataBuilder builder() {
-        return new ResourceMetadataBuilder();
+        public FieldInfo(String name, String type, boolean required, Map<String, Object> constraints) {
+            this.name = name;
+            this.type = type;
+            this.required = required;
+            this.constraints = constraints;
+        }
+
+        public String getName() { return name; }
+        public String getType() { return type; }
+        public boolean isRequired() { return required; }
+        public Map<String, Object> getConstraints() { return constraints; }
     }
 
-    public static class ResourceMetadataBuilder<T extends BaseEntity, R extends Record> {
+    public static class Builder<T extends BaseEntity, D> {
         private Class<T> entityClass;
-        private Class<R> dtoClass;
+        private Class<D> dtoClass;
         private String basePath;
-        private JpaRepository<T, Long> repository;
+        private GenericRepository<T> repository;
         private BaseService<T> service;
         private CrudInterceptor<T> interceptor;
         private List<FieldInfo> fields;
 
-        public ResourceMetadataBuilder<T, R> entityClass(Class<T> entityClass) {
+        public Builder<T, D> entityClass(Class<T> entityClass) {
             this.entityClass = entityClass;
             return this;
         }
 
-        public ResourceMetadataBuilder<T, R> dtoClass(Class<R> dtoClass) {
+        public Builder<T, D> dtoClass(Class<D> dtoClass) {
             this.dtoClass = dtoClass;
             return this;
         }
 
-        public ResourceMetadataBuilder<T, R> basePath(String basePath) {
+        public Builder<T, D> basePath(String basePath) {
             this.basePath = basePath;
             return this;
         }
 
-        public ResourceMetadataBuilder<T, R> repository(JpaRepository<T, Long> repository) {
+        public Builder<T, D> repository(GenericRepository<T> repository) {
             this.repository = repository;
             return this;
         }
 
-        public ResourceMetadataBuilder<T, R> service(BaseService<T> service) {
+        public Builder<T, D> service(BaseService<T> service) {
             this.service = service;
             return this;
         }
 
-        public ResourceMetadataBuilder<T, R> interceptor(CrudInterceptor<T> interceptor) {
+        public Builder<T, D> interceptor(CrudInterceptor<T> interceptor) {
             this.interceptor = interceptor;
             return this;
         }
 
-        public ResourceMetadataBuilder<T, R> fields(List<FieldInfo> fields) {
+        public Builder<T, D> fields(List<FieldInfo> fields) {
             this.fields = fields;
             return this;
         }
 
-        public ResourceMetadata<T, R> build() {
-            return new ResourceMetadata<>(entityClass, dtoClass, basePath, repository, service, interceptor, fields);
+        public ResourceMetadata<T, D> build() {
+            return new ResourceMetadata<>(this);
         }
     }
 }

@@ -10,6 +10,7 @@ import jakarta.persistence.Entity;
  * Database representation of a Product.
  */
 @Entity
+@Table(name = "product")
 @CrudResource(path = "products", dto = ProductRecord.class, roles = {"ADMIN", "USER"})
 public class Product extends BaseEntity {
     private String name;

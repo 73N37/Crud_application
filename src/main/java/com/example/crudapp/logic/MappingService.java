@@ -6,7 +6,6 @@ import com.example.crudapp.infrastructure.annotations.Parent;
 import com.example.crudapp.infrastructure.mapping.MappingCache;
 import com.example.crudapp.infrastructure.mapping.MappingCache.RecordMapping;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
 import java.util.Map;
@@ -17,7 +16,6 @@ import java.util.Optional;
  * Decoupled mapping service responsible for Entity <-> Record conversions.
  * Optimized with MethodHandles for high performance.
  */
-@Service
 public class MappingService {
 
     private final ObjectMapper objectMapper;
