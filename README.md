@@ -57,7 +57,7 @@ The framework natively supports tree-like structures (Parent-Child, Grandparent-
 
 ## School Project Mastery: System Design Features
 
-This framework is an excellent candidate for a high-grade system design project because it demonstrates several advanced architectural patterns:
+This framework is an excellent candidate for several advanced architectural patterns:
 
 ### 1. Layered Architecture & Generics
 - The project clearly separates concerns into **Controller**, **Service**, and **Repository** layers.
