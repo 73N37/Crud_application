@@ -120,7 +120,7 @@ public class UniversalServer {
         String host = dotenv.get("DB_HOST", "localhost:5432");
         String db = dotenv.get("DB_NAME", "cruddb");
         String user = dotenv.get("DB_USER", "user");
-        String pass = dotenv.get("DB_PASSWORD", "password");
+        String pass = dotenv.get("DB_PASSWORD", "");
         String ssl = dotenv.get("DB_SSLMODE", "disable");
         
         // H2 Memory Fallback for fast prototyping if requested

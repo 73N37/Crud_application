@@ -1,6 +1,6 @@
 @url = http://localhost:7070/api
 @admin_email = admin@carebridge.io
-@admin_password = admin123
+@admin_password = admin
 
 ### 1) Health check (no auth)
 GET {{url}}/auth/healthcheck
@@ -159,7 +159,8 @@ Content-Type: application/json
 
 {
   "email": "alice@carebridge.io",
-  "password": "password123"
+  "password": "password",
+
 }
 
 > {%

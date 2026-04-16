@@ -27,7 +27,7 @@ public class Populator {
                 admin = new User();
                 admin.setName("Admin");
                 admin.setEmail("admin@carebridge.io");
-                admin.setPassword("admin123");
+                admin.setPassword("admin");
                 admin.setRole(Role.ADMIN);
                 admin.setDisplayName("Admin User");
                 admin.setDisplayEmail("admin@carebridge.io");
