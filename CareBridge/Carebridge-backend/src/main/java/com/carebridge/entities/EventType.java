@@ -6,13 +6,14 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-
 import java.util.Objects;
 
 @Entity
 @Table(
-        name = "event_types",
-        uniqueConstraints = @UniqueConstraint(name = "uq_event_types_name", columnNames = "name")
+        name                = "event_types",
+        uniqueConstraints   = @UniqueConstraint(
+            name                = "uq_event_types_name",
+            columnNames         = "name")
 )
 @CrudResource(path = "event-types")
 public class EventType extends BaseEntity {
@@ -20,22 +21,15 @@ public class EventType extends BaseEntity {
     @NotBlank
     @Size(max = 100)
     @Column(nullable = false)
-    private String name;
+    private String name; 
 
-    @Size(max = 7)
-    @Pattern(
-            regexp = "^#([A-Fa-f0-9]{6})$",
-            message = "color_hex must be in format #RRGGBB"
-    )
-    @Column(name = "color_hex", length = 7)
-    private String colorHex;
+
 
     public EventType() {
     }
 
-    public EventType(String name, String colorHex) {
+    public EventType(String name) {
         this.name = name;
-        this.colorHex = colorHex;
     }
 
     @Override
